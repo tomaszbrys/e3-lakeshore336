@@ -1,0 +1,3 @@
+[submodule "lakeshore336"]
+	path = lakeshore336
+	url = https://github.com/tomaszbrys/lakeshore336
