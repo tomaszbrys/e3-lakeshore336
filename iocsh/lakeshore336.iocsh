@@ -1,0 +1,17 @@
+# just use the prefix as the portname
+epicsEnvSet("PORTNAME", "$(PREFIX)")
+epicsEnvSet("IPADDR", "$(IPADDR)")
+epicsEnvSet("IPPORT", "$(IPPORT)")
+epicsEnvSet("PREFIX", "$(PREFIX)")
+
+#Specifying the TCP endpoint and port name
+drvAsynIPPortConfigure("$(PORTNAME)", "$(IPADDR):$(IPPORT)")
+
+#Load your database defining the EPICS records
+dbLoadTemplate(lakeshore336.substitutions, "P=$(PREFIX), PORT=$(PORTNAME), ADDR=$(IPPORT)")
+
+#Configure file access
+drvAsynFileConfigure("calib-files", "$(REQUIRE_lakeshore336_PATH)/misc", 15000)
+
+#Load your database defining the EPICS records
+dbLoadRecords(lakeshore336_curve_management.db, "P=$(PREFIX), ASYNPORT=$(PORTNAME), ASYNCALIBPORT=calib-files")

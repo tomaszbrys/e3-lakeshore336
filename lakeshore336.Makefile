@@ -39,9 +39,9 @@ include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 #asyn_VERSION=$(ASYN_DEP_VERSION)
 #endif
 
-#ifneq ($(strip $(SEQUENCER_DEP_VERSION)),)
-#sequencer_VERSION=$(SEQUENCER_DEP_VERSION)
-#endif
+ifneq ($(strip $(SEQUENCER_DEP_VERSION)),)
+sequencer_VERSION=$(SEQUENCER_DEP_VERSION)
+endif
 
 
 
@@ -49,9 +49,10 @@ include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 ##EXCLUDE_ARCHS = linux-ppc64e6500
 ##EXCLUDE_ARCHS += linux-corei7-poky
 
-# APP:=calcApp
-# APPDB:=$(APP)/Db
-# APPSRC:=$(APP)/src
+APP:=lakeshore336App
+APPDB:=$(APP)/Db
+APPSRC:=$(APP)/src
+APPPROTO:=$(APP)/protocol
 
 
 # USR_INCLUDES += -I$(where_am_I)$(APPSRC)
@@ -63,10 +64,10 @@ include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 # USR_CPPFLAGS += -Wno-unused-function
 # USR_CPPFLAGS += -Wno-unused-but-set-variable
 
-# TEMPLATES += $(wildcard $(APPDB)/*.db)
-# TEMPLATES += $(wildcard $(APPDB)/*.db)
-# TEMPLATES += $(wildcard $(APPDB)/*.proto)
-# TEMPLATES += $(wildcard $(APPDB)/*.template)
+TEMPLATES += $(wildcard $(APPDB)/*.db)
+TEMPLATES += $(wildcard $(APPPROTO)/*.proto)
+TEMPLATES += $(wildcard $(APPDB)/*.template)
+TEMPLATES += $(wildcard $(APPDB)/*.substitutions)
 
 
 # DBDINC_SRCS += $(APPSRC)/swaitRecord.c
@@ -85,8 +86,8 @@ include $(E3_REQUIRE_CONFIG)/DECOUPLE_FLAGS
 # HEADERS += $(DBDINC_HDRS)
 
 
-# SOURCES += $(APPSRC)/sCalcPostfix.c
-# SOURCES += $(APPSRC)/sCalcPerform.c
+SOURCES += $(wildcard $(APPSRC)/*.c)
+SOURCES += $(wildcard $(APPSRC)/*.st)
 # SOURCES += $(APPSRC)/aCalcPostfix.c
 # SOURCES += $(APPSRC)/aCalcPerform.c
 
@@ -202,25 +203,25 @@ db:
 # USR_DBFLAGS += -I $(EPICS_BASE)/db
 # USR_DBFLAGS += -I $(APPDB)
 #
-# SUBS=$(wildcard $(APPDB)/*.substitutions)
-# TMPS=$(wildcard $(APPDB)/*.template)
+SUBS=$(wildcard $(APPDB)/*.substitutions)
+TMPS=$(wildcard $(APPDB)/*.template)
 #
-# db: $(SUBS) $(TMPS)
+db: $(SUBS) $(TMPS)
 
-# $(SUBS):
-#	@printf "Inflating database ... %44s >>> %40s \n" "$@" "$(basename $(@)).db"
-#	@rm -f  $(basename $(@)).db.d  $(basename $(@)).db
-#	@$(MSI) -D $(USR_DBFLAGS) -o $(basename $(@)).db -S $@  > $(basename $(@)).db.d
-#	@$(MSI)    $(USR_DBFLAGS) -o $(basename $(@)).db -S $@
+$(SUBS):
+	@printf "Inflating database ... %44s >>> %40s \n" "$@" "$(basename $(@)).db"
+	@rm -f  $(basename $(@)).db.d  $(basename $(@)).db
+	@$(MSI) -D $(USR_DBFLAGS) -o $(basename $(@)).db -S $@  > $(basename $(@)).db.d
+	@$(MSI)    $(USR_DBFLAGS) -o $(basename $(@)).db -S $@
 
-# $(TMPS):
-#	@printf "Inflating database ... %44s >>> %40s \n" "$@" "$(basename $(@)).db"
-#	@rm -f  $(basename $(@)).db.d  $(basename $(@)).db
-#	@$(MSI) -D $(USR_DBFLAGS) -o $(basename $(@)).db $@  > $(basename $(@)).db.d
-#	@$(MSI)    $(USR_DBFLAGS) -o $(basename $(@)).db $@
+$(TMPS):
+	@printf "Inflating database ... %44s >>> %40s \n" "$@" "$(basename $(@)).db"
+	@rm -f  $(basename $(@)).db.d  $(basename $(@)).db
+	@$(MSI) -D $(USR_DBFLAGS) -o $(basename $(@)).db $@  > $(basename $(@)).db.d
+	@$(MSI)    $(USR_DBFLAGS) -o $(basename $(@)).db $@
 
 #
-# .PHONY: db $(SUBS) $(TMPS)
+.PHONY: db $(SUBS) $(TMPS)
 
 vlibs:
 
