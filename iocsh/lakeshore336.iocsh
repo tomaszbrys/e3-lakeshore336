@@ -10,6 +10,9 @@ drvAsynIPPortConfigure("$(PORTNAME)", "$(IPADDR):$(IPPORT)")
 #Load your database defining the EPICS records
 dbLoadTemplate(lakeshore336.substitutions, "P=$(PREFIX), PORT=$(PORTNAME), ADDR=$(IPPORT)")
 
+#Load your database defining the EPICS records for seting a curve to a channel
+dbLoadTemplate(lakeshore224_channelnames.substitutions, "P=$(PREFIX), PORT=$(PORTNAME), ADDR=$(IPPORT)")
+
 #Configure file access
 drvAsynFileConfigure("calib-files", "$(REQUIRE_lakeshore336_PATH)/misc", 15000)
 
